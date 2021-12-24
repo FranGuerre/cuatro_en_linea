@@ -1,0 +1,89 @@
+* {
+  padding:0;
+  margin:0;
+  font-size:62.25%;
+  box-sizing: border-box;
+}
+
+#contenedor {
+  display:flex;
+  column-gap:1px;
+  width:700px;
+  height: 600px;
+  border: 3px solid #333;
+  background-color: rgb(210,230,250);
+}
+
+#tablero {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+}
+.columna {
+  display:flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  justify-content:center;
+  background-color:rgb(250,150,150);
+  width:100px;
+  height:100%;
+}
+.columna:hover {
+  /* background-color: rgb(250,210,220); */
+  background-color:rgb(250,190,150);
+}
+
+.espacio {
+  pointer-events: none;
+  display:flex;
+  width:calc(700px / 6);
+  /* height:100px; */
+  
+  justify-content: center;
+  align-items: center;
+}
+.ficha {
+  /* pointer-events: none; */
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background-color:rgb(210,230,250);
+}
+
+.ficha--A {
+  background-color:green;
+}
+
+.ficha--B {
+  background-color:yellow;
+}
+
+.btn {
+margin: 0 auto;
+width:100px;
+height:50px;
+font-size:30px;
+}
+
+#mensajeria {
+  display: inline-block;
+  height:50px;
+  width:max-content;
+  background-color: #333;
+  margin:0;
+  font-size:40px;
+  color:azure;
+}
+
+#modal-ganador {
+  display:none;
+  position:absolute;
+  top:200px;
+  left:200px;
+  width:500px;
+  height:200px;
+  border-radius:10px;
+  border:3px solid #333;
+  background-color: cornsilk;
+  color:blueviolet;
+  font-size:40px;
+}
