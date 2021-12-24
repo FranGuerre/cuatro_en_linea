@@ -1,54 +1,26 @@
 let matriz = crearMatriz(6, 7, 0);
 let columnas = document.querySelectorAll(".columna");
-let banderaTurno = 1, contadorTurnos = 0;
-
-let gameover = false;
+let banderaTurno = 1, contadorTurnos = 1, gameover = false;
 let pA, pB;
-const jsonA = sessionStorage.getItem("pA");
-const jsonB = sessionStorage.getItem("pB");
-
-pA = JSON.parse(jsonA);
-pB = JSON.parse(jsonB);
-
+//crea tablero y jugadores
 $(document).ready(function() {
-  // guardarNombres();
   crearTablero();  
+
 });
 
 
-$("#btn").click(function() {
-  juego();
-});
 
-$("#btn-reset").click(function() {
-  reset();
-  alert("reset");
-});
-
-$("#btn-win").click(function() {
-  winVertical();
-});
-
-function crearMatriz(rows, cols, valorDefault) {
-    let arr = [];
-  
-    for (var i = 0; i < rows; i++) {
-        arr.push([]);
-        arr[i].push(new Array(cols));
-        for (var j = 0; j < cols; j++) {
-            arr[i][j] = valorDefault;
-        }
-    }
-    
-    return arr;
-}
+//fin crea tablero
 
 function juego() 
 {
-  banderaTurno = 1, contadorTurnos = 0;
+  banderaTurno = 1, contadorTurnos = 1;
   gameover = false;
-
   guardarNombres();
+  const jsonA = sessionStorage.getItem("pA");
+  const jsonB = sessionStorage.getItem("pB");
+  pA = JSON.parse(jsonA);
+  pB = JSON.parse(jsonB);
   indicadorTurno(banderaTurno);
   funcionalidadColumnas();
 }
@@ -203,7 +175,6 @@ function validarJugada(col) {
           }
         }
         if(banderaI === 1) {
-          console.log("I");
           if(matriz[fila][col - i] != 0) {
             contadorI++;
             banderaI = 1;
@@ -214,7 +185,6 @@ function validarJugada(col) {
         }
         
         if(banderaD === 0 && banderaI === 0) {
-          console.log("break");
           cJugada = 0;
           break;
         }
@@ -230,33 +200,19 @@ function validarJugada(col) {
   return noWin;
 }
 
-function crearTablero() {
-  let ficha;
-  for(let i = 7; i > 0; i--) {
-    for(let j = 6; j > 0; j--) {
-      ficha = document.createElement("DIV");
-      ficha.setAttribute("id", `${j}${i}`);
-      ficha.setAttribute("class", "ficha");
-
-      $(`#col-${i}`).append(ficha);
-    } 
-  }
-}
-
 function reset() {
   resetTablero();
+  contadorTurnos = 1;
 }
 
 function resetTablero() {
   let ficha;
   for (let i = 0; i < 7; i++) {       
     for (let j = 0; j < 6; j++) {
-      ficha = $(`#${j + 1}${i + 1}`);
-      console.log(ficha);
-      
-      matriz[j][i] = 0; //faltaria poder obtener el valor default de matriz
-      ficha.classList.remove("ficha--A");
-      ficha.classList.remove("ficha--B");    
+      // ficha = $(`#${j + 1}${i + 1}`);
+      matriz[j][i] = 0; 
+      $(`#${j + 1}${i + 1}`).removeClass("ficha--A");
+      $(`#${j + 1}${i + 1}`).removeClass("ficha--B");    
     }
   }
 }
@@ -274,19 +230,7 @@ function winVertical() {
   }
 }
 
-function guardarNombres() {
-  const pA = {nombre:"", puntos: 0, turno: 0};
-  const pB = {nombre:"", puntos: 0, turno: 0};
-  
-  pA.nombre = prompt("Nombre player A");
-  pB.nombre = prompt("Nombre player B");
 
-  const jsonA = JSON.stringify(pA);
-  const jsonB = JSON.stringify(pB);
-
-  sessionStorage.setItem("pA", jsonA);
-  sessionStorage.setItem("pB", jsonB);
-}
 
 function funcionalidadColumnas() 
 {
@@ -299,17 +243,22 @@ function funcionalidadColumnas()
       if(ponerFicha(colId - 1)) {
         if(banderaTurno === 1) {
           pA.turno = parseInt(colId);
-          if(validarJugada(pA.turno)) {
-            hayGanador(pA.nombre);
+          if(contadorTurnos >= 7) {
+            if(validarJugada(pA.turno)) {
+              hayGanador(pA.nombre);
+            }
           }
         } else {
           pB.turno = parseInt(colId);
-          if(validarJugada(pB.turno)) {
-            hayGanador(pB.nombre);
+          if(contadorTurnos >= 7) {
+            if(validarJugada(pB.turno)) {
+              hayGanador(pB.nombre);
+            }
           }
         }
         cambiarTurno();
         indicadorTurno(banderaTurno);
+        contadorTurnos++;
       }     
     });
   });
@@ -324,12 +273,12 @@ function cambiarTurno() {
 }
 
 function indicadorTurno(turno) {
-  let indTurno = document.getElementById("indicador-turno");
-  //reemplazar texto por pa.nombre
   if(turno === 1) {
-    indTurno.innerHTML = "Jugador A";
+    console.log(pA.nombre);
+    $("#indicador-turno").text(pA.nombre);
   } else {
-    indTurno.innerHTML = "Jugador B";
+    console.log(pB.nombre);
+    $("#indicador-turno").text(pB.nombre);
   }
 }
 function mensaje(str, color) {
@@ -339,10 +288,68 @@ function mensaje(str, color) {
 }
 
 function hayGanador(jugador) {
-  $("#modal-ganador").show();
-
+  $("#modal-ganador").addClass("mostrar");
   $("#modal-ganador__msj").text = `${jugador}, ganaste!`;
   $("#modal-ganador__btn").click(function() {
-    $("#modal-ganador").hide();
+    $("#modal-ganador").removeClass("mostrar");
+    reset();
   });
 }
+
+//tablero y matriz
+function crearMatriz(rows, cols, valorDefault) {
+  let arr = [];
+
+  for (var i = 0; i < rows; i++) {
+      arr.push([]);
+      arr[i].push(new Array(cols));
+      for (var j = 0; j < cols; j++) {
+          arr[i][j] = valorDefault;
+      }
+  }
+  
+  return arr;
+}
+
+function crearTablero() {
+  let ficha;
+  for(let i = 7; i > 0; i--) {
+    for(let j = 6; j > 0; j--) {
+      ficha = document.createElement("DIV");
+      ficha.setAttribute("id", `${j}${i}`);
+      ficha.setAttribute("class", "ficha");
+
+      $(`#col-${i}`).append(ficha);
+    } 
+  }
+}
+//fin tablero y matriz
+
+//almacenamiento
+
+function guardarNombres() {
+  const pA = {nombre:"", puntos: 0, turno: 0};
+  const pB = {nombre:"", puntos: 0, turno: 0};
+  
+  pA.nombre = prompt("Nombre player A");
+  pB.nombre = prompt("Nombre player B");
+
+  const jsonA = JSON.stringify(pA);
+  const jsonB = JSON.stringify(pB);
+
+  sessionStorage.setItem("pA", jsonA);
+  sessionStorage.setItem("pB", jsonB);
+}
+//fin almacenamiento
+
+//botones
+$("#btn").click(function() {
+  juego();
+});
+
+$("#btn-reset").click(function() {
+  reset();
+  alert("reset");
+});
+
+//fin botones
