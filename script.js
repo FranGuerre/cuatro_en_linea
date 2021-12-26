@@ -14,6 +14,7 @@ $(document).ready(function() {
 
 function juego() 
 {
+  console.log(matriz);
   banderaTurno = 1, contadorTurnos = 1;
   gameover = false;
   guardarNombres();
@@ -96,16 +97,18 @@ function juego()
 //   } while(gameover === false);
 // }
 
-function ponerFicha(col) {
-  let espacioEnCol = lugarEnCol(col);
-  
-  if(espacioEnCol != -1) {
+function ponerFicha(col) { // guarda ficha en la matriz
+  let columna = col - 1; // ponerFicha se ocupa de la conversión
+  let espacioEnCol = lugarEnCol(columna);
+  console.log(`ponerFicha = fila ${espacioEnCol}, col ${columna}`)
+  if(espacioEnCol != 6) { //la fila 6 es fuera del tablero y por ende invalida
     if(banderaTurno === 1) {
-      matriz[espacioEnCol][col] = 1;  
+      matriz[espacioEnCol][columna] = 1;  
     } else {
-      matriz[espacioEnCol][col] = 2;
+      matriz[espacioEnCol][columna] = 2;
     }
-    agregarFichaATablero(espacioEnCol + 1, col + 1);
+    console.log(matriz);
+    agregarFichaATablero(espacioEnCol, columna);
 
     return true;
   } else {
@@ -113,29 +116,28 @@ function ponerFicha(col) {
   }
 }
 
-function agregarFichaATablero(fila, col) {
-  let ficha = document.getElementById(`${fila}${col}`);
+function agregarFichaATablero(fi, col) {
+  let fila = fi + 1;
+  let columna = col + 1;
+  let ficha = document.getElementById(`${fila}${columna}`);
+  console.log(`agregarFichaATablero = fila ${fila}, col ${columna}`);
   if(banderaTurno === 1) {
     ficha.classList.add("ficha--A");
   } else {
     ficha.classList.add("ficha--B");
   }
 }
-function lugarEnCol(col) {
-  let cCol;
-  col = parseInt(col);
-  cCol = 0;
+function lugarEnCol(col) { // devuelve el último lugar ocupado de la columna
+  let cCol = 0;
+  columna = parseInt(col);
   
   for(let i = 0; i < 6; i++) {
-    if(matriz[i][col] === 1 || matriz[i][col] === 2) {
-      cCol++;
+    if(matriz[i][columna] != 0) {
+      cCol++;      
     }
   }
-  if(cCol === 6) {
-    return -1;
-  } else {
-    return cCol;
-  }
+  console.log(`lugarEnCol = fila ${cCol}, col ${columna}`);
+  return cCol;
 } 
 
 function mostrarMatriz() {
@@ -148,89 +150,146 @@ function mostrarMatriz() {
 }
 
 function validarJugada(col) {
-  let fila = lugarEnCol(col);
-  let id = [fila, col];
+  let columna = col - 1;
+  let fila = lugarEnCol(columna) - 1;
+  let id = [fila, columna];
+  console.log(`validarJugada = fila ${fila}, col ${columna},`);
   let win = true, noWin = false;
-  if(fila != -1) {
-    if(fila >= 3) { //validacion jugada vertical
-      if(matriz[id[0] - 1][1] != 0 
-        && matriz[id[0] - 2][1] != 0 
-        && matriz[id[0] - 3][1] != 0) 
-      {          
+
+  if(fila != -1) {  
+    //validacion jugada horizontal
+    console.log("VALIDACIÓN JUGADA HORIZONTAL");  
+    let banderaD = 1, banderaI = 1, cJugada = 0, contadorD = 1, contadorI = 1;
+
+    for(let i = 0; i < 5; i++) {
+      if(banderaD === 1) {//valida lado derecho
+        if(matriz[fila][columna + contadorD] === banderaTurno) {            
+          console.log(`DERECHA: fila${fila}col${columna + contadorD} = ${matriz[fila][columna + contadorD]}`); 
+          contadorD++;  
+          banderaD = 1;        
+          cJugada++;
+        } else {
+          console.log(`DERECHA: fila${fila}col${columna + contadorD} = ${matriz[fila][columna + contadorD]}`); 
+          banderaD = 0;
+        }
+      }
+      if(banderaI === 1) {//valida lado izquierdo
+        if(matriz[fila][columna - contadorI] === banderaTurno) {
+          console.log(`IZQUIERDA: fila${fila}col${columna - contadorI} = ${matriz[fila][columna - contadorI]}`); 
+          contadorI++;
+          banderaI = 1;
+          cJugada++;
+        } else {
+          console.log(`IZQUIERDA: fila${fila}col${columna - contadorI} = ${matriz[fila][columna - contadorI]}`);
+          banderaI = 0;
+        }  
+      }
+      
+      if(banderaD === 0 && banderaI === 0) {
+        break;
+      }
+    }
+    if(cJugada >= 3) {
+      return win;
+    }
+    //fin validacion jugada horizontal 
+
+    //validacion jugada vertical
+    if(fila >= 3) { 
+      console.log("VALIDACIÓN JUGADA VERTICAL");
+      if(matriz[fila - 1][columna] === banderaTurno 
+        && matriz[fila - 2][columna] === banderaTurno 
+        && matriz[fila - 3][columna] === banderaTurno) 
+      {
+        console.log(`fila${fila}col${columna} = ${matriz[id[0]][columna]}`);          
+        console.log(`fila${fila - 1}col${columna} = ${matriz[id[0] - 1][columna]}`);
+        console.log(`fila${fila - 2}col${columna} = ${matriz[id[0] - 2][columna]}`);
+        console.log(`fila${fila - 3}col${columna} = ${matriz[id[0] - 3][columna]}`);        
         return win;
       }  
-    } else { //validacion jugada horizontal
-      
-      let banderaD = 1, banderaI = 1, cJugada = 0, contadorD = 0, contadorI = 0;
-
-      for(let i = 1; i <= 4; i++) {
-        if(banderaD === 1) {
-          if(matriz[fila][col + i] != 0) {
-            console.log("D");
-            contadorD++;  
+    }
+    //fin validacion jugada vertical 
+    //validacion jugada diagonal
+    console.log("VALIDACIÓN JUGADA DIAGONAL /");
+    if(contadorTurnos > 9) {      
+      let banderaD = 1, banderaI = 1, banderaDB = 1, banderaIB = 1, cJugada = 0;
+      let contadorDA = 1, contadorIA = 1, contadorDB = 1, contadorIB = 1;
+  
+      for(let i = 0; i < 5; i++) {
+        if(banderaD === 1) {//valida lado derecho a /
+          if(matriz[fila + contadorDA][columna + contadorDA] === banderaTurno) {            
+            console.log(`DERECHA_A: fila${fila}col${columna + contadorD} = ${matriz[fila][columna + contadorD]}`); 
+            contadorDA++;  
             banderaD = 1;        
             cJugada++;
           } else {
+            console.log(`DERECHA_A: fila${fila}col${columna + contadorDA} = ${matriz[fila][columna + contadorDA]}`); 
             banderaD = 0;
           }
         }
-        if(banderaI === 1) {
-          if(matriz[fila][col - i] != 0) {
-            contadorI++;
+        if(banderaI === 1) {//valida lado izquierdo a /
+          if(matriz[fila - contadorIA][columna - contadorIA] === banderaTurno) {
+            console.log(`IZQUIERDA_A: fila${fila}col${columna - contadorIA} = ${matriz[fila][columna - contadorIA]}`); 
+            contadorIA++;
             banderaI = 1;
             cJugada++;
           } else {
+            console.log(`IZQUIERDA_A: fila${fila}col${columna - contadorIA} = ${matriz[fila][columna - contadorIA]}`);
             banderaI = 0;
           }  
-        }
-        
+        }             
         if(banderaD === 0 && banderaI === 0) {
-          cJugada = 0;
           break;
         }
       }
-
-      if(cJugada >= 4) {
-        return win;   
+      if(cJugada >= 3) {
+        return win;
       }
+      // if(banderaD === 1) {//valida lado derecho b \
+        //   if(matriz[fila][columna + contadorDB] === banderaTurno) {            
+        //     console.log(`DERECHA: fila${fila}col${columna + contadorDA} = ${matriz[fila][columna + contadorDA]}`); 
+        //     contadorD++;  
+        //     banderaD = 1;        
+        //     cJugada++;
+        //   } else {
+        //     console.log(`DERECHA: fila${fila}col${columna + contadorDA} = ${matriz[fila][columna + contadorDA]}`); 
+        //     banderaD = 0;
+        //   }
+        // }
+        // if(banderaI === 1) {//valida lado izquierdo b \
+        //   if(matriz[fila][columna - contadorIB] === banderaTurno) {
+        //     console.log(`IZQUIERDA: fila${fila}col${columna - contadorI} = ${matriz[fila][columna - contadorI]}`); 
+        //     contadorI++;
+        //     banderaI = 1;
+        //     cJugada++;
+        //   } else {
+        //     console.log(`IZQUIERDA: fila${fila}col${columna - contadorI} = ${matriz[fila][columna - contadorI]}`);
+        //     banderaI = 0;
+        //   }  
+        // }  
     }
+    //fin validacion jugada diagonal
     
-     
   }
   return noWin;
 }
 
 function reset() {
   resetTablero();
-  contadorTurnos = 1;
+  indicadorTurno("");
+  contadorTurnos = 0;
 }
 
 function resetTablero() {
-  let ficha;
   for (let i = 0; i < 7; i++) {       
     for (let j = 0; j < 6; j++) {
-      // ficha = $(`#${j + 1}${i + 1}`);
       matriz[j][i] = 0; 
       $(`#${j + 1}${i + 1}`).removeClass("ficha--A");
       $(`#${j + 1}${i + 1}`).removeClass("ficha--B");    
     }
   }
+  console.log(matriz);
 }
-
-function winVertical() {
-  let win;
-  for (let i = 0; i < 4; i++) {  
-    matriz[i][2] = 1;
-  }
-  win = validarJugada(4);
-  if(win) {
-    gameover = true;
-    alert("pA ha ganado");
-    return gameover;
-  }
-}
-
-
 
 function funcionalidadColumnas() 
 {
@@ -239,18 +298,19 @@ function funcionalidadColumnas()
       let colId = col.id;
       colId = colId.split("");
       colId = parseInt(colId[colId.length - 1]);
+      console.log(`col click id: ${colId}`);
      
-      if(ponerFicha(colId - 1)) {
+      if(ponerFicha(colId)) {
         if(banderaTurno === 1) {
           pA.turno = parseInt(colId);
-          if(contadorTurnos >= 7) {
+          if(contadorTurnos >= 6) { //empieza a validarJugada una vez que se superaron seis turnos
             if(validarJugada(pA.turno)) {
               hayGanador(pA.nombre);
             }
           }
         } else {
           pB.turno = parseInt(colId);
-          if(contadorTurnos >= 7) {
+          if(contadorTurnos >= 6) {
             if(validarJugada(pB.turno)) {
               hayGanador(pB.nombre);
             }
@@ -276,9 +336,11 @@ function indicadorTurno(turno) {
   if(turno === 1) {
     console.log(pA.nombre);
     $("#indicador-turno").text(pA.nombre);
-  } else {
+  } else if(turno === 2) {
     console.log(pB.nombre);
     $("#indicador-turno").text(pB.nombre);
+  } else {
+    $("#indicador-turno").text("");
   }
 }
 function mensaje(str, color) {
@@ -287,14 +349,10 @@ function mensaje(str, color) {
   msj.innerHTML = str;
 }
 
-function hayGanador(jugador) {
-  $("#modal-ganador").addClass("mostrar");
-  $("#modal-ganador__msj").text = `${jugador}, ganaste!`;
-  $("#modal-ganador__btn").click(function() {
-    $("#modal-ganador").removeClass("mostrar");
-    reset();
-  });
-}
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+
 
 //tablero y matriz
 function crearMatriz(rows, cols, valorDefault) {
@@ -328,17 +386,23 @@ function crearTablero() {
 //almacenamiento
 
 function guardarNombres() {
-  const pA = {nombre:"", puntos: 0, turno: 0};
-  const pB = {nombre:"", puntos: 0, turno: 0};
+  if(sessionStorage.getItem("pA") === null) {
+    const pA = {nombre:"", puntos: 0, turno: 0};
+    const pB = {nombre:"", puntos: 0, turno: 0};
+    
+    pA.nombre = prompt("Nombre player A");
+    pB.nombre = prompt("Nombre player B");
   
-  pA.nombre = prompt("Nombre player A");
-  pB.nombre = prompt("Nombre player B");
+    const jsonA = JSON.stringify(pA);
+    const jsonB = JSON.stringify(pB);
+  
+    sessionStorage.setItem("pA", jsonA);
+    sessionStorage.setItem("pB", jsonB);
+  }
+}
 
-  const jsonA = JSON.stringify(pA);
-  const jsonB = JSON.stringify(pB);
+function resetJugadores() {
 
-  sessionStorage.setItem("pA", jsonA);
-  sessionStorage.setItem("pB", jsonB);
 }
 //fin almacenamiento
 
@@ -353,3 +417,18 @@ $("#btn-reset").click(function() {
 });
 
 //fin botones
+
+//modulo
+
+function hayGanador(jugador) {
+  console.log(`${jugador}, ganaste!`);
+  $(".modal-ganador").addClass("mostrar");
+  $(".modal-ganador__msj").text(`${jugador}, ganaste!`);
+  $(".modal-ganador__btn").click(function() {
+    $(".modal-ganador").removeClass("mostrar");
+    $(".modal-ganador").addClass("ocultar");
+    reset();
+  });
+}
+
+//fin modulo
