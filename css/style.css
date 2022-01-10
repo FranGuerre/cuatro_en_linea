@@ -11,7 +11,6 @@ body {
   grid-auto-flow: column;
 }
 header {
- 
   display:flex;
   flex-wrap:wrap;
   width:100px;
@@ -37,6 +36,11 @@ header
   width:700px;
   height:600px;
   grid-template-columns:repeat(7,1fr);
+  background: rgb(254,187,187); /* Old browsers */
+background: -moz-linear-gradient(-45deg, rgb(254,187,187) 0%, rgb(254,144,144) 20%, rgb(255,92,92) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(-45deg, rgb(254,187,187) 0%,rgb(254,144,144) 20%,rgb(255,92,92) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg, rgb(254,187,187) 0%,rgb(254,144,144) 20%,rgb(255,92,92) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#febbbb', endColorstr='#ff5c5c',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
 .columna {
@@ -44,7 +48,7 @@ header
   flex-wrap: nowrap;
   flex-direction: column;
   justify-content:center;
-  background-color:rgb(250,150,150);
+  /* background-color:rgb(250,150,150); */
   width:100px;
   height:100%;
 }
@@ -56,9 +60,7 @@ header
 .espacio {
   pointer-events: none;
   display:flex;
-  width:calc(700px / 6);
-  /* height:100px; */
-  
+
   justify-content: center;
   align-items: center;
 }
@@ -71,11 +73,17 @@ header
 }
 
 .ficha--A {
-  background-color:green;
+  background: rgb(183,222,237); /* Old browsers */
+  background: -moz-radial-gradient(center, ellipse cover, rgb(183,222,237) 0%, rgb(113,206,239) 50%, rgb(33,180,226) 51%, rgb(183,222,237) 100%); /* FF3.6-15 */
+  background: -webkit-radial-gradient(center, ellipse cover, rgb(183,222,237) 0%,rgb(113,206,239) 50%,rgb(33,180,226) 51%,rgb(183,222,237) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: radial-gradient(ellipse at center, rgb(183,222,237) 0%,rgb(113,206,239) 50%,rgb(33,180,226) 51%,rgb(183,222,237) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 }
 
 .ficha--B {
-  background-color:yellow;
+  background: rgb(254,204,177); /* Old browsers */
+background: -moz-radial-gradient(center, ellipse cover, rgb(254,204,177) 0%, rgb(241,116,50) 50%, rgb(234,85,7) 51%, rgb(251,149,94) 100%); /* FF3.6-15 */
+background: -webkit-radial-gradient(center, ellipse cover, rgb(254,204,177) 0%,rgb(241,116,50) 50%,rgb(234,85,7) 51%,rgb(251,149,94) 100%); /* Chrome10-25,Safari5.1-6 */
+background: radial-gradient(ellipse at center, rgb(254,204,177) 0%,rgb(241,116,50) 50%,rgb(234,85,7) 51%,rgb(251,149,94) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 }
 
 .btn {
@@ -97,9 +105,8 @@ font-size:30px;
 .modal-ganador {
   display:none;
   position:absolute;
-
-  top:200px;
-  left:200px;
+  left: 50%;
+  transform: translate(-50%, 0);
   width:500px;
   height:200px;
   border-radius:10px;
@@ -109,8 +116,8 @@ font-size:30px;
 }
 
 .mostrar {
-  display:flex;
-  justify-content: center;
+  display:grid;
+  justify-items: center;
   align-items: center;
 }
 .ocultar {
@@ -120,4 +127,10 @@ font-size:30px;
 .modal-ganador__msj {
   color:blueviolet;
   font-size:40px;
+}
+
+.modal-ganador__btn {
+  width:80px;
+  height:40px;
+  font-size:25px;
 }

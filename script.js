@@ -27,21 +27,22 @@ function juego()
 
 function ponerFicha(col) { // guarda ficha en la matriz
   let columna = col - 1; // ponerFicha se ocupa de la conversión
-  let espacioEnCol = lugarEnCol(columna);
-  console.log(`ponerFicha = fila ${espacioEnCol}, col ${columna}`)
-  if(espacioEnCol != 6) { //la fila 6 es fuera del tablero y por ende invalida
+  let espacioEnColumna = lugarEnColumna(columna) < 6;//la fila 6 es fuera del tablero y por ende invalida
+  
+  if(espacioEnColumna) {     
+    let fila = lugarEnColumna(columna);
     if(banderaTurno === 1) {
-      matriz[espacioEnCol][columna] = 1;  
+      matriz[fila][columna] = 1;  
     } else {
-      matriz[espacioEnCol][columna] = 2;
+      matriz[fila][columna] = 2;
     }
     console.log(matriz);
-    agregarFichaATablero(espacioEnCol, columna);
-
+    console.log(`ponerFicha = fila ${fila}, col ${columna}`);
+    agregarFichaATablero(fila, columna);
     return true;
-  } else {
-    return false;
-  }
+  } 
+  console.log("ponerFicha: no hay lugar");
+  return false;
 }
 
 function agregarFichaATablero(fi, col) {
@@ -55,7 +56,7 @@ function agregarFichaATablero(fi, col) {
     ficha.classList.add("ficha--B");
   }
 }
-function lugarEnCol(col) { // devuelve el último lugar ocupado de la columna
+function lugarEnColumna(col) { // devuelve el último lugar ocupado de la columna
   let cCol = 0;
   let columna = parseInt(col);
   
@@ -66,12 +67,12 @@ function lugarEnCol(col) { // devuelve el último lugar ocupado de la columna
       break;
     }
   }
-  console.log(`lugarEnCol = fila ${cCol}, col ${columna}`);
-  return cCol;
+  console.log(`lugarEnColumna = fila ${cCol - 1}, col ${columna}`);
+  return cCol; //convierte a matriz
 } 
 
 function validarJugada(col) {
-  let fila = lugarEnCol(col - 1);
+  let fila = lugarEnColumna(col - 1);
   let gana = true, noGana = false;
 
   console.log(`validarJugada = fila ${fila}, col ${col},`);
@@ -379,7 +380,7 @@ let Validaciones = {
         }
         if(banderaI === 1) {//valida lado izquierdo a /
           direccion = -1;
-          if(!!fueraTablero.DiagonalB(fila, col, contadorI, contadorD, direccion) && matriz[filaConv - contadorI][colConv - contadorI] === banderaTurno) {
+          if(!fueraTablero.DiagonalB(fila, col, contadorI, contadorD, direccion) && matriz[filaConv - contadorI][colConv - contadorI] === banderaTurno) {
             contadorI++;
             banderaI = 1;
             cJugada++;
