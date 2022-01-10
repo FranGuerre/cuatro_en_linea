@@ -70,15 +70,6 @@ function lugarEnCol(col) { // devuelve el último lugar ocupado de la columna
   return cCol;
 } 
 
-function mostrarMatriz() {
-  let matrizStr = "";
-  for(let i = 5; i >= 0; i--) {
-    matrizStr += matriz[i];
-    matrizStr += "\n";
-  }  
-  alert(matrizStr);
-}
-
 function validarJugada(col) {
   let fila = lugarEnCol(col - 1);
   let gana = true, noGana = false;
@@ -95,20 +86,7 @@ function validarJugada(col) {
 
 function reset() {
   sessionStorage.clear();
-  resetTablero();
-  indicadorTurno("");
-  contadorTurnos = 1, banderaTurno = 1, gameover = false;
-}
-
-function resetTablero() {
-  for (let i = 0; i < 7; i++) {       
-    for (let j = 0; j < 6; j++) {
-      matriz[j][i] = 0; 
-      $(`#${j + 1}${i + 1}`).removeClass("ficha--A");
-      $(`#${j + 1}${i + 1}`).removeClass("ficha--B");    
-    }
-  }
-  console.log(matriz);
+  location.reload(true);
 }
 
 function funcionalidadColumnas() 
@@ -230,7 +208,7 @@ $("#btn").click(function() {
 
 $("#btn-reset").click(function() {
   reset();
-  alert("reset");
+  console.log("Reset realizado");
 });
 
 //fin botones
