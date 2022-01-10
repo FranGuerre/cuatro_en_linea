@@ -235,7 +235,7 @@ $("#btn-reset").click(function() {
 
 //fin botones
 
-//modulo
+//modulos
 
 function hayGanador(jugador) {
   console.log(`${jugador}, ganaste!`);
@@ -248,29 +248,25 @@ function hayGanador(jugador) {
   });
 }
 
-//fin modulo
+//fin modulos
 
 let fueraTablero = {
-
-  DiagonalA: function(fila, col, contador, direccion) {
-    if(direccion === 1) { //suma o resta en base a si valida hacia arriba o abajo 1 o -1
-      return fila + contador > 6 || col - contador < 1;
+  DiagonalA: function(fila, col, contadorI, contadorD, direccion) {
+    if(direccion === 1) { //suma o resta en base a si valida izquierda o derecha -1 o 1
+      return fila - contadorD < 1 || col + contadorD > 7;
+      
     } else {
-      return fila - contador < 1 || col + contador < 1;
+      return fila + contadorI > 6 || col - contadorI < 1;
     }
-  
   },
 
-  DiagonalB: function(fila, col, contador, direccion) {
-    if(direccion === 1) { //suma o resta en base a si valida hacia arriba o abajo 1 o -1
-      return fila + contador > 6 || col + contador > 7;
+  DiagonalB: function(fila, col, contadorI, contadorD, direccion) {
+    if(direccion === 1) { //suma o resta en base a si valida izquierda o derecha -1 o 1
+      return fila + contadorD > 6 || col + contadorD > 7;
     } else {
-      return fila - contador < 1 || col - contador < 1;
+      return fila - contadorI < 1 || col - contadorI < 1;
     }
-  
-  },
-
-
+  }
 }
 
 
@@ -340,31 +336,31 @@ let Validaciones = {
       let contadorD = 1, contadorI = 1;
   
       for(let i = 0; i < 5; i++) {
-        if(banderaD === 1) {//valida lado derecho a /
+        if(banderaD === 1) {//valida lado derecho de \
           direccion = 1;
-          if(!fueraTablero(fila, col, contadorD, direccion) && matriz[filaConv + contadorD][colConv + contadorD] === banderaTurno) {                         
+          if(!fueraTablero.DiagonalA(fila, col, contadorI, contadorD, direccion) && matriz[filaConv - contadorD][colConv + contadorD] === banderaTurno) {                         
             contadorD++;  
             banderaD = 1;        
             cJugada++;
           } else {            
             banderaD = 0;
           }
-          if(!fueraTablero(fila, col, contadorD, direccion)) {
+          if(!fueraTablero.DiagonalA(fila, col, contadorI, contadorD, direccion)) {
             console.log(`DERECHA_A: fila
-            ${fila + contadorD}col${col + contadorD} = ${matriz[filaConv + contadorD][colConv + contadorD]}`);
+            ${fila + contadorD}col${col + contadorD} = ${matriz[filaConv - contadorD][colConv + contadorD]}`);
           }          
         }
-        if(banderaI === 1) {//valida lado izquierdo a /
+        if(banderaI === 1) {//valida lado izquierdo de \
           direccion = -1;
-          if(!fueraTablero(fila, col, contadorI, direccion) && matriz[filaConv - contadorI][colConv - contadorI] === banderaTurno) {
+          if(!fueraTablero.DiagonalA(fila, col, contadorI, contadorD, direccion) && matriz[filaConv + contadorI][colConv - contadorI] === banderaTurno) {
             contadorI++;
             banderaI = 1;
             cJugada++;
           } else {            
             banderaI = 0;
           }
-          if(!fueraTablero(fila, col, contadorI, direccion)) {
-            console.log(`IZQUIERDA_A: fila${fila - contadorI}col${col - contadorI} = ${matriz[filaConv - contadorI][colConv - contadorI]}`);
+          if(!fueraTablero.DiagonalA(fila, col, contadorI, contadorD, direccion)) {
+            console.log(`IZQUIERDA_A: fila${fila - contadorI}col${col - contadorI} = ${matriz[filaConv + contadorI][colConv - contadorI]}`);
           }
         }             
         if(banderaD === 0 && banderaI === 0) {
@@ -372,7 +368,6 @@ let Validaciones = {
         }
         console.log("cJugada: " + cJugada);
         if(cJugada >= 3) {
-          console.log("WIN");
           return gana;
         }
       }
@@ -392,28 +387,28 @@ let Validaciones = {
       for(let i = 0; i < 5; i++) {
         if(banderaD === 1) {//valida lado derecho a /
           direccion = 1;
-          if(!fueraTablero(fila, col, contadorD, direccion) && matriz[filaConv + contadorD][colConv + contadorD] === banderaTurno) {                         
+          if(!fueraTablero.DiagonalB(fila, col, contadorI, contadorD, direccion) && matriz[filaConv + contadorD][colConv + contadorD] === banderaTurno) {                         
             contadorD++;  
             banderaD = 1;        
             cJugada++;
           } else {            
             banderaD = 0;
           }
-          if(!fueraTablero(fila, col, contadorD, direccion)) {
+          if(!fueraTablero.DiagonalB(fila, col, contadorI, contadorD, direccion)) {
             console.log(`DERECHA_A: fila
             ${fila + contadorD}col${col + contadorD} = ${matriz[filaConv + contadorD][colConv + contadorD]}`);
           }          
         }
         if(banderaI === 1) {//valida lado izquierdo a /
           direccion = -1;
-          if(!fueraTablero(fila, col, contadorI, direccion) && matriz[filaConv - contadorI][colConv - contadorI] === banderaTurno) {
+          if(!!fueraTablero.DiagonalB(fila, col, contadorI, contadorD, direccion) && matriz[filaConv - contadorI][colConv - contadorI] === banderaTurno) {
             contadorI++;
             banderaI = 1;
             cJugada++;
           } else {            
             banderaI = 0;
           }
-          if(!fueraTablero(fila, col, contadorI, direccion)) {
+          if(!fueraTablero.DiagonalB(fila, col, contadorI, contadorD, direccion)) {
             console.log(`IZQUIERDA_A: fila${fila - contadorI}col${col - contadorI} = ${matriz[filaConv - contadorI][colConv - contadorI]}`);
           }
         }             
@@ -422,7 +417,6 @@ let Validaciones = {
         }
         console.log("cJugada: " + cJugada);
         if(cJugada >= 3) {
-          console.log("WIN");
           return gana;
         }
       }
