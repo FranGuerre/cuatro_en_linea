@@ -6,22 +6,18 @@ let pA, pB;
 $(document).ready(function() {
   crearTablero();  
 });
-
-
-
 //fin crea tablero
 
 function juego() 
 {
   console.log(matriz);
   banderaTurno = 1, contadorTurnos = 1;
-  gameover = false;
-  guardarNombres();
+  gameover = false;  
   const jsonA = sessionStorage.getItem("pA");
   const jsonB = sessionStorage.getItem("pB");
   pA = JSON.parse(jsonA);
   pB = JSON.parse(jsonB);
-  indicadorTurno(banderaTurno);
+  Modal.Jugadores();
   funcionalidadColumnas();
 }
 
@@ -104,14 +100,14 @@ function funcionalidadColumnas()
           pA.turno = parseInt(colId);
           if(contadorTurnos >= 6) { //empieza a validarJugada una vez que se superaron seis turnos
             if(validarJugada(pA.turno)) {
-              hayGanador(pA.nombre);
+              Modal.HayGanador(pA.nombre);
             }
           }
         } else {
           pB.turno = parseInt(colId);
           if(contadorTurnos >= 6) {
             if(validarJugada(pB.turno)) {
-              hayGanador(pB.nombre);
+              Modal.HayGanador(pB.nombre);
             }
           }
         }
@@ -184,19 +180,24 @@ function crearTablero() {
 
 //almacenamiento
 
-function guardarNombres() {
-  if(sessionStorage.getItem("pA") === null) {
-    const pA = {nombre:"", puntos: 0, turno: 0};
-    const pB = {nombre:"", puntos: 0, turno: 0};
+function guardarNombres(jugadorA, jugadorB) {
+  jugadorA.trim().toLowerCase();
+  jugadorB.trim().toLowerCase();
+  if(typeof jugadorA != "undefined" && typeof jugadorB != "undefined") {
+    if(sessionStorage.getItem("pA") === null) {
+      const pA = {nombre:"", puntos: 0, turno: 0};
+      const pB = {nombre:"", puntos: 0, turno: 0};
+      
+      pA.nombre = jugadorA;
+      pB.nombre = jugadorB;
     
-    pA.nombre = prompt("Nombre player A");
-    pB.nombre = prompt("Nombre player B");
-  
-    const jsonA = JSON.stringify(pA);
-    const jsonB = JSON.stringify(pB);
-  
-    sessionStorage.setItem("pA", jsonA);
-    sessionStorage.setItem("pB", jsonB);
+      const jsonA = JSON.stringify(pA);
+      const jsonB = JSON.stringify(pB);
+    
+      sessionStorage.setItem("pA", jsonA);
+      sessionStorage.setItem("pB", jsonB);
+      console.log("jugadorA " + jugadorA + "// jugadorB " + jugadorB);
+    }
   }
 }
 
@@ -214,20 +215,34 @@ $("#btn-reset").click(function() {
 
 //fin botones
 
-//modulos
+//Modals
 
-function hayGanador(jugador) {
-  console.log(`${jugador}, ganaste!`);
-  $(".modal-ganador").addClass("mostrar");
-  $(".modal-ganador__msj").text(`${jugador}, ganaste!`);
-  $(".modal-ganador__btn").click(function() {
-    $(".modal-ganador").removeClass("mostrar");
-    $(".modal-ganador").addClass("ocultar");
-    reset();
-  });
+let Modal = {
+  HayGanador: function(jugador) {
+    console.log(`${jugador}, ganaste!`);
+    $(".modal-ganador").addClass("mostrar");
+    $(".modal-ganador__msj").text(`${jugador}, ganaste!`);
+    $(".modal-ganador__btn").click(function() {
+      $(".modal-ganador").removeClass("mostrar");
+      $(".modal-ganador").addClass("ocultar");
+      reset();
+    });
+  },
+
+  Jugadores: function() {
+    console.log("Modal Jugadores");
+    $(".modal-jugadores").addClass("mostrar");
+    $(".modal-jugadores__btn").click(function() {
+      guardarNombres($("#jugador-1").val(), $("#jugador-2").val());
+      indicadorTurno(banderaTurno);
+      $(".modal-jugadores").removeClass("mostrar");
+      $(".modal-jugadores").addClass("ocultar");
+    });
+  }
+  
 }
 
-//fin modulos
+//fin Modals
 
 let fueraTablero = {
   DiagonalA: function(fila, col, contadorI, contadorD, direccion) {
@@ -293,7 +308,7 @@ let Validaciones = {
     let filaConv = fila - 1, colConv = col - 1;
     let gana = true, noGana = false;
 
-    if(fila >= 3) { 
+    if(fila > 3) { 
       console.log("VALIDACIÓN JUGADA VERTICAL");
       if(matriz[filaConv - 1][colConv] === banderaTurno 
         && matriz[filaConv - 2][colConv] === banderaTurno 
