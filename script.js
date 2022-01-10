@@ -1,7 +1,7 @@
 let matriz = crearMatriz(6, 7, 0);
 let columnas = document.querySelectorAll(".columna");
 let banderaTurno = 1, contadorTurnos = 1, gameover = false;
-let pA, pB;
+var pA, pB;
 //crea tablero y jugadores
 $(document).ready(function() {
   crearTablero();  
@@ -13,10 +13,6 @@ function juego()
   console.log(matriz);
   banderaTurno = 1, contadorTurnos = 1;
   gameover = false;  
-  const jsonA = sessionStorage.getItem("pA");
-  const jsonB = sessionStorage.getItem("pB");
-  pA = JSON.parse(jsonA);
-  pB = JSON.parse(jsonB);
   Modal.Jugadores();
   funcionalidadColumnas();
 }
@@ -128,6 +124,10 @@ function cambiarTurno() {
 }
 
 function indicadorTurno(turno) {
+  const jsonA = sessionStorage.getItem("pA");
+  const jsonB = sessionStorage.getItem("pB");
+  pA = JSON.parse(jsonA);
+  pB = JSON.parse(jsonB);
   if(turno === 1) {
     console.log(pA.nombre);
     $("#indicador-turno").text(pA.nombre);
